@@ -50,6 +50,20 @@ namespace HumanResourceManagement
                 };
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular",
+                    policy =>
+                    {
+                        policy
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin();
+                    });
+            });
+
+           
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -82,6 +96,7 @@ namespace HumanResourceManagement
 
             var app = builder.Build();
 
+            app.UseCors("AllowAngular");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
