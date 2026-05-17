@@ -1,7 +1,8 @@
-﻿using HumanResourceManagement.Data;
+using HumanResourceManagement.Data;
 using HumanResourceManagement.Exceptions;
 using HumanResourceManagement.Models.DTOs.Employees;
 using HumanResourceManagement.Models.Employees;
+using Microsoft.EntityFrameworkCore;
 
 namespace HumanResourceManagement.Services.Employees
 {
@@ -41,23 +42,25 @@ namespace HumanResourceManagement.Services.Employees
         }
 
         // Get all employees
-        public List<EmployeeDto> GetAll()
+        public async Task<List<EmployeeDto>> GetAll()
         {
-            var departments = _context.Departments.ToList();
-
-            return _context.Employees
-                .ToList()
-                .Select(e => new EmployeeDto
-                {
-                    Id = e.Id,
-                    FullName = e.FullName,
-                    Department = departments
-                        .FirstOrDefault(d => d.Id == e.DepartmentId)?.Name,
-                    Position = e.Position,
-                    Status = e.Status
-                })
-                .ToList();
+            return await _context.Employees
+                .Join(
+                    _context.Departments,
+                    emp => emp.DepartmentId,
+                    dept => dept.Id,
+                    (emp, dept) => new EmployeeDto
+                    {
+                        Id = emp.Id,
+                        FullName = emp.FullName,
+                        Department = dept.Name,
+                        Position = emp.Position,
+                        Status = emp.Status
+                    }
+                )
+                .ToListAsync();
         }
+
 
         // Get employee by id
         public EmployeeDto GetById(int id)
