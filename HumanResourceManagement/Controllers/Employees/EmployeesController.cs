@@ -39,7 +39,11 @@ namespace HumanResourceManagement.Controllers.Employees
         public async Task<IActionResult> Delete(int id)
         {
             await _service.Delete(id);
-            return Ok("Delete");
+             return Ok(new
+             {
+                 success = true,
+                 message = "Xóa nhân viên thành công"
+             });
         }
 
         [HttpPut("{id}")]
