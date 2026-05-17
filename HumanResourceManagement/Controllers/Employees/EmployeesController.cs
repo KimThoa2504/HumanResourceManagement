@@ -26,7 +26,7 @@ namespace HumanResourceManagement.Controllers.Employees
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(_service.GetAll());
+            return Ok(await Task.Run(() => _service.GetAll())); 
         }
 
         [HttpGet("{id}")]
