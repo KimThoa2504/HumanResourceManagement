@@ -7,7 +7,7 @@ namespace HumanResourceManagement.Controllers.Employees
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "ADMIN,HR")]
+    //[Authorize(Roles = "ADMIN,HR")]
     public class EmployeesController : ControllerBase
     {
         private readonly EmployeeService _service;
@@ -26,7 +26,7 @@ namespace HumanResourceManagement.Controllers.Employees
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(_service.GetAll());
+            return Ok(await Task.Run(() => _service.GetAll())); 
         }
 
         [HttpGet("{id}")]
@@ -39,7 +39,11 @@ namespace HumanResourceManagement.Controllers.Employees
         public async Task<IActionResult> Delete(int id)
         {
             await _service.Delete(id);
-            return Ok("Delete");
+            return Ok(new
+            {
+                success = true,
+                message = "Xóa nhân viên thành công"
+            });
         }
 
         [HttpPut("{id}")]

@@ -2,6 +2,7 @@
 using HumanResourceManagement.Exceptions;
 using HumanResourceManagement.Models.DTOs.Employees;
 using HumanResourceManagement.Models.Employees;
+using Microsoft.EntityFrameworkCore;
 
 namespace HumanResourceManagement.Services.Employees
 {
@@ -35,35 +36,53 @@ namespace HumanResourceManagement.Services.Employees
             {
                 Id = emp.Id,
                 FullName = emp.FullName,
+                Dob = emp.Dob,
+                Gender = emp.Gender,
+                Phone = emp.Phone,
+                Address = emp.Address,
+                DepartmentId = emp.DepartmentId,
                 Position = emp.Position,
+                Salary = emp.Salary,
                 Status = emp.Status
             };
         }
 
         // Get all employees
-        public List<EmployeeDto> GetAll()
+        public async Task<List<EmployeeDto>> GetAll()
         {
-            var departments = _context.Departments.ToList();
-
-            return _context.Employees
-                .ToList()
-                .Select(e => new EmployeeDto
-                {
-                    Id = e.Id,
-                    FullName = e.FullName,
-                    Department = departments
-                        .FirstOrDefault(d => d.Id == e.DepartmentId)?.Name,
-                    Position = e.Position,
-                    Status = e.Status
-                })
-                .ToList();
+            return await _context.Employees
+                .Join(
+                    _context.Departments,
+                    emp => emp.DepartmentId,
+                    dept => dept.Id,
+                    (emp, dept) => new EmployeeDto
+                    {
+                        Id = emp.Id,
+                        FullName = emp.FullName,
+                        Dob = emp.Dob,
+                        Gender = emp.Gender,
+                        Phone = emp.Phone,
+                        Address = emp.Address,
+                        DepartmentId = emp.DepartmentId,
+                        Department = dept.Name,
+                        Position = emp.Position,
+                        Salary = emp.Salary,
+                        HireDate = emp.HireDate,
+                        Status = emp.Status
+                    }
+                )
+                .ToListAsync();
         }
+
 
         // Get employee by id
         public EmployeeDto GetById(int id)
         {
-            var emp = _context.Employees.FirstOrDefault(x => x.Id == id);
-            if (emp == null) throw new ApiException("Not found");
+            var emp = _context.Employees
+                .FirstOrDefault(x => x.Id == id);
+
+            if (emp == null)
+                throw new ApiException("Employee not found");
 
             var dept = _context.Departments
                 .FirstOrDefault(d => d.Id == emp.DepartmentId);
@@ -72,8 +91,15 @@ namespace HumanResourceManagement.Services.Employees
             {
                 Id = emp.Id,
                 FullName = emp.FullName,
+                Dob = emp.Dob,
+                Gender = emp.Gender,
+                Phone = emp.Phone,
+                Address = emp.Address,
+                DepartmentId = emp.DepartmentId,
                 Department = dept?.Name,
                 Position = emp.Position,
+                Salary = emp.Salary,
+                HireDate = emp.HireDate,
                 Status = emp.Status
             };
         }
@@ -109,7 +135,13 @@ namespace HumanResourceManagement.Services.Employees
             {
                 Id = emp.Id,
                 FullName = emp.FullName,
+                Dob = emp.Dob,
+                Gender = emp.Gender,
+                Phone = emp.Phone,
+                Address = emp.Address,
+                DepartmentId = emp.DepartmentId,
                 Position = emp.Position,
+                Salary = emp.Salary,
                 Status = emp.Status
             };
         }
