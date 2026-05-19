@@ -1,4 +1,4 @@
-﻿using HumanResourceManagement.Data;
+using HumanResourceManagement.Data;
 using HumanResourceManagement.Exceptions;
 using HumanResourceManagement.Models.DTOs.Employees;
 using HumanResourceManagement.Models.Employees;
