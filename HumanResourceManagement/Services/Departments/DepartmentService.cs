@@ -43,7 +43,8 @@ namespace HumanResourceManagement.Services.Departments
                 .Select(d => new DepartmentDto
                 {
                     Id = d.Id,
-                    Name = d.Name
+                    Name = d.Name,
+                    Description = d.Description
                 }).ToList();
         }
 
@@ -91,10 +92,7 @@ namespace HumanResourceManagement.Services.Departments
         }
 
         //update
-        public async Task<DepartmentDto> Update(
-            int id,
-            UpdateDepartmentDto dto
-        )
+        public async Task<DepartmentDto> Update(int id,UpdateDepartmentDto dto)
         {
             var dept = await _context.Departments.FindAsync(id);
 
@@ -109,6 +107,8 @@ namespace HumanResourceManagement.Services.Departments
 
             if (existed)
                 throw new ApiException("Department already exists");
+            if (!string.IsNullOrEmpty(dto.Description))
+                dept.Description = dto.Description;
 
             dept.Name = dto.Name;
             dept.Description = dto.Description;
