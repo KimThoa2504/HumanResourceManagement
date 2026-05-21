@@ -26,5 +26,11 @@ namespace HumanResourceManagement.Models.LeaveRequests
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Column("attachment_path")]
+        public string? AttachmentPath { get; set; }   
+
+        [Column("attachment_name")]
+        public string? AttachmentName { get; set; }
     }
 }

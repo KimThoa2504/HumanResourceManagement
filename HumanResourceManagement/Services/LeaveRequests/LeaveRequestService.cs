@@ -2,6 +2,7 @@
 using HumanResourceManagement.Exceptions;
 using HumanResourceManagement.Models.DTOs.LeaveRequests;
 using HumanResourceManagement.Models.LeaveRequests;
+using System.Net.Mail;
 
 namespace HumanResourceManagement.Services.LeaveRequests
 {
@@ -14,7 +15,7 @@ namespace HumanResourceManagement.Services.LeaveRequests
             _context = context;
         }
         //create leave request
-        public async Task<LeaveRequestDto> Create(CreateLeaveRequestDto dto)
+        public async Task<LeaveRequestDto> Create(CreateLeaveRequestDto dto, IFormFile? attachment, IWebHostEnvironment env)
         {
             if (dto.EndDate < dto.StartDate)
                 throw new ApiException("End date must be greater than start date");
@@ -30,8 +31,31 @@ namespace HumanResourceManagement.Services.LeaveRequests
                 EmployeeId = dto.EmployeeId,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
-                Reason = dto.Reason
+                Reason = dto.Reason,
+                Status = "Pending",
+                CreatedAt = DateTime.Now
             };
+
+            // Xử lý file đính kèm
+            if (attachment != null && attachment.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(env.WebRootPath, "uploads", "leave-attachments");
+
+                // Tạo thư mục nếu chưa có
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = $"leave_{DateTime.Now.Ticks}_{attachment.FileName}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await attachment.CopyToAsync(stream);
+                }
+
+                leave.AttachmentPath = $"/uploads/leave-attachments/{uniqueFileName}";
+                leave.AttachmentName = attachment.FileName;
+            }
 
             _context.LeaveRequests.Add(leave);
             await _context.SaveChangesAsync();
@@ -43,7 +67,10 @@ namespace HumanResourceManagement.Services.LeaveRequests
                 StartDate = leave.StartDate,
                 EndDate = leave.EndDate,
                 Reason = leave.Reason,
-                Status = leave.Status
+                Status = leave.Status,
+                AttachmentPath = leave.AttachmentPath,
+                AttachmentName = leave.AttachmentName,
+                CreatedAt = leave.CreatedAt
             };
         }
 

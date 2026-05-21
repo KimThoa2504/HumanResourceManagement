@@ -13,5 +13,10 @@
         public string? Reason { get; set; }
 
         public string Status { get; set; } = "";
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public string? AttachmentPath { get; set; }
+        public string? AttachmentName { get; set; }
     }
 }

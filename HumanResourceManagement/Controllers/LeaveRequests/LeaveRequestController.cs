@@ -11,16 +11,19 @@ namespace HumanResourceManagement.Controllers.LeaveRequests
     public class LeaveRequestController: ControllerBase
     {
         private readonly LeaveRequestService _service;
+        private readonly IWebHostEnvironment _env;
 
-        public LeaveRequestController(LeaveRequestService service)
+        public LeaveRequestController(LeaveRequestService service, IWebHostEnvironment env)
         {
             _service = service;
+            _env = env;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateLeaveRequestDto dto)
+        public async Task<IActionResult> Create([FromForm] CreateLeaveRequestDto dto, IFormFile? attachment)
         {
-            return Ok(await _service.Create(dto));
+            var result = await _service.Create(dto, attachment, _env);
+            return Ok(result);
         }
 
         [HttpGet]
