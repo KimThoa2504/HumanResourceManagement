@@ -40,5 +40,13 @@ namespace HumanResourceManagement.Controllers.Departments
             return Ok(_service.Search(query));
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            int id,
+            UpdateDepartmentDto dto
+        )
+        {
+            return Ok(await _service.Update(id, dto));
+        }
     }
 }

@@ -21,7 +21,8 @@ namespace HumanResourceManagement.Services.Departments
 
             var dept = new Department
             {
-                Name = dto.Name
+                Name = dto.Name,
+                Description = dto.Description
             };
 
             _context.Departments.Add(dept);
@@ -30,7 +31,8 @@ namespace HumanResourceManagement.Services.Departments
             return new DepartmentDto
             {
                 Id = dept.Id,
-                Name = dept.Name
+                Name = dept.Name,
+                Description = dept.Description
             };
         }
 
@@ -85,6 +87,39 @@ namespace HumanResourceManagement.Services.Departments
                 page = query.Page,
                 pageSize = query.PageSize,
                 data = result
+            };
+        }
+
+        //update
+        public async Task<DepartmentDto> Update(
+            int id,
+            UpdateDepartmentDto dto
+        )
+        {
+            var dept = await _context.Departments.FindAsync(id);
+
+            if (dept == null)
+                throw new ApiException("Department not found");
+
+            // check duplicate
+            var existed = _context.Departments.Any(d =>
+                d.Name == dto.Name &&
+                d.Id != id
+            );
+
+            if (existed)
+                throw new ApiException("Department already exists");
+
+            dept.Name = dto.Name;
+            dept.Description = dto.Description;
+
+            await _context.SaveChangesAsync();
+
+            return new DepartmentDto
+            {
+                Id = dept.Id,
+                Name = dept.Name,
+                Description = dept.Description
             };
         }
     }
