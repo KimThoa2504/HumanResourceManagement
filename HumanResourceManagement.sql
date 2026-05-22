@@ -37,52 +37,56 @@ CREATE TABLE Employees (
 );
 -- bảng chấm công
 CREATE TABLE Attendance (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- ID chấm công
-    employee_id INT NOT NULL, -- Nhân viên
-    work_date DATE NOT NULL, -- Ngày làm việc
-    check_in TIME, -- Giờ vào
-    check_out TIME, -- Giờ ra
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    employee_id INT NOT NULL,
+    work_date DATE NOT NULL, 
+    check_in TIME, 
+    check_out TIME, 
 	UNIQUE (employee_id, work_date),
     FOREIGN KEY (employee_id) REFERENCES Employees(id)
 );
 -- bảng nghỉ phép
 CREATE TABLE LeaveRequests (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- ID đơn nghỉ
-    employee_id INT NOT NULL, -- Nhân viên
-    start_date DATE NOT NULL, -- Ngày bắt đầu
-    end_date DATE NOT NULL, -- Ngày kết thúc
-    reason TEXT, -- Lý do nghỉ
-    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending', -- Trạng thái
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Ngày tạo đơn
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    employee_id INT NOT NULL, 
+    start_date DATE NOT NULL, 
+    end_date DATE NOT NULL, 
+    reason TEXT, 
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending', 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (employee_id) REFERENCES Employees(id)
 );
+ALTER TABLE LeaveRequests
+ADD COLUMN attachment_path VARCHAR(255),
+ADD COLUMN attachment_name VARCHAR(255);
+    
 -- bảng đánh giá
 CREATE TABLE Performance (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- ID đánh giá
-    employee_id INT NOT NULL, -- Nhân viên
-    score INT CHECK (score BETWEEN 0 AND 100), -- Điểm đánh giá
-    review TEXT, -- Nhận xét
-    period VARCHAR(50), -- Ví dụ: '2026-Q1', '03-2026'
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Ngày đánh giá
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    employee_id INT NOT NULL, 
+    score INT CHECK (score BETWEEN 0 AND 100), 
+    review TEXT, 
+    period VARCHAR(50), 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (employee_id) REFERENCES Employees(id)
 );
 -- bảng tuyển dụng
 CREATE TABLE Recruitment (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- ID tin tuyển dụng
-    title VARCHAR(255), -- Tiêu đề
-    description TEXT, -- Mô tả công việc
-    department VARCHAR(100), -- Phòng ban tuyển
-    status ENUM('OPEN', 'CLOSED') DEFAULT 'OPEN', -- Trạng thái
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Ngày tạo
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    title VARCHAR(255), 
+    description TEXT, 
+    department VARCHAR(100), 
+    status ENUM('OPEN', 'CLOSED') DEFAULT 'OPEN', 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP 
 );
 -- bảng ứng viên
 CREATE TABLE Candidates (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- ID ứng viên
-    full_name VARCHAR(255), -- Họ tên
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    full_name VARCHAR(255), 
     email VARCHAR(100),
     phone VARCHAR(20),
-    recruitment_id INT, -- Thuộc tin tuyển dụng
-    status ENUM('APPLIED', 'INTERVIEW', 'HIRED', 'REJECTED') DEFAULT 'APPLIED', -- Trạng thái
+    recruitment_id INT, 
+    status ENUM('APPLIED', 'INTERVIEW', 'HIRED', 'REJECTED') DEFAULT 'APPLIED', 
     FOREIGN KEY (recruitment_id) REFERENCES Recruitment(id)
 );
 
