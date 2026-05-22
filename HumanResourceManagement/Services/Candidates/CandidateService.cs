@@ -55,6 +55,7 @@ namespace HumanResourceManagement.Services.Candidates
                     Id = c.Id,
                     FullName = c.FullName,
                     Email = c.Email,
+                    Phone = c.Phone,
                     RecruitmentTitle = recruitments
                         .FirstOrDefault(r => r.Id == c.RecruitmentId)?.Title ?? "",
                     Status = c.Status
