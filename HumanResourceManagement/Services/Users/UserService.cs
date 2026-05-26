@@ -17,32 +17,6 @@ namespace HumanResourceManagement.Services.Users
             _context = context;
         }
 
-        //public async Task<UserDto> CreateUser(CreateUserDto dto)
-        //{
-        //    if (_context.Users.Any(x => x.Username == dto.Username))
-        //        throw new Exception("Username already exists");
-
-        //    var user = new User
-        //    {
-        //        Username = dto.Username,
-        //        Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-        //        Email = dto.Email,
-        //        Role = dto.Role,
-        //        Status = UserStatus.ACTIVE
-        //    };
-
-        //    _context.Users.Add(user);
-        //    await _context.SaveChangesAsync();
-
-        //    return new UserDto
-        //    {
-        //        Id = user.Id,
-        //        Username = user.Username,
-        //        Email = user.Email,
-        //        Role = user.Role,
-        //        Status = user.Status
-        //    };
-        //}
         public async Task<UserDto> CreateUser(CreateUserDto dto)
         {
             // Validate input
@@ -110,7 +84,7 @@ namespace HumanResourceManagement.Services.Users
                 throw new ApiException("Database error: " + message);
             }
 
-            // 🎯 6. Return DTO
+            //  Return DTO
             return new UserDto
             {
                 Id = user.Id,
@@ -138,6 +112,15 @@ namespace HumanResourceManagement.Services.Users
             if (user == null) throw new ApiException("User not found");
 
             user.Status = UserStatus.LOCKED;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UnlockUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) throw new ApiException("User not found");
+
+            user.Status = UserStatus.ACTIVE;
             await _context.SaveChangesAsync();
         }
     }
