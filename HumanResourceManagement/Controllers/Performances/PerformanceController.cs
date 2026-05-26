@@ -7,7 +7,7 @@ namespace HumanResourceManagement.Controllers.Performances
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "ADMIN,MANAGER")]
+    [Authorize(Roles = "ADMIN,MANAGER,HR")]
     public class PerformanceController : ControllerBase
     {
         private readonly PerformanceService _service;
